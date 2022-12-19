@@ -1,0 +1,161 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Stackverse default project</title>
+    <meta name="description" content="Stackverse default project" />
+
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-pointcloud-component/dist/aframe-pointcloud-component.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.4.0/socket.io.slim.js"></script>
+    <script src="/aframe-resonance-audio-component/aframe-resonance-audio-component.js"></script>
+    <script src="/easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe@^0.10.0/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-super-keyboard/dist/aframe-super-keyboard.min.js"></script>
+    <script src="/aframe-stackbeat/aframe-stackbeat.js"></script>
+
+    <script>
+      // see issue https://github.com/networked-aframe/networked-aframe/issues/267
+      NAF.schemas.getComponentsOriginal = NAF.schemas.getComponents;
+      NAF.schemas.getComponents = (template) => {
+        if (!NAF.schemas.hasTemplate("#avatar-template")) {
+          NAF.schemas.add({
+            template: "#avatar-template",
+            components: [
+              "position",
+              "rotation",
+              {
+                selector: ".head",
+                component: "material",
+                property: "color",
+              },
+            ],
+          });
+        }
+        if (!NAF.schemas.hasTemplate("#stackverse-template")) {
+          NAF.schemas.add({
+            template: "#stackverse-template",
+            components: [
+              "position",
+              {
+                component: "stackbeat",
+                property: "code",
+              },
+            ],
+          });
+        }
+        const components = NAF.schemas.getComponentsOriginal(template);
+        return components;
+      };
+    </script>
+
+    <script src="/js/persistent-p2p.component.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+  </head>
+  <body>
+    <a-scene
+      cursor="rayOrigin: mouse"
+      raycaster="objects:.raycastable"
+      persistent-p2p
+      networked-scene="
+        room: persistent-peer-to-peer;
+        debug: true;
+        adapter: wseasyrtc"
+    >
+      <a-resonance-audio-room
+        id="ResonanceRoom"
+        position="0 2 0"
+        width="15"
+        height="4"
+        depth="15"
+        ambisonic-order="3"
+        speed-of-sound="343"
+        left="curtain-heavy"
+        right="curtain-heavy"
+        front="curtain-heavy"
+        back="curtain-heavy"
+        down="curtain-heavy"
+        up="acoustic-ceiling-tiles"
+        visualize="true"
+      >
+      </a-resonance-audio-room>
+
+      <a-assets>
+        <!-- Templates -->
+        <template id="stackverse-template">
+          <a-entity
+            class="raycastable"
+            geometry="primitive: box"
+            material="wireframe:true"
+            text="value:Hello World;side:double"
+            resonance-audio-src="
+            src:;
+            loop: true;
+            autoplay: true;"
+            stackbeat=""
+          >
+            <a-entity
+              id="keyboard"
+              super-keyboard="hand:; imagePath:./aframe-stackbeat/;multipleInputs:true"
+              stack-keyboard
+              position="0 -0.6 +0.6"
+              rotation="-30 0 0"
+            ></a-entity>
+          </a-entity>
+        </template>
+
+        <!-- Avatar -->
+
+        <template id="avatar-template">
+          <a-entity class="avatar">
+            <a-pointcloud
+              class="head"
+              scale="2 2 2"
+              rotation="0 180 0"
+              src="head.ply"
+              size="0.001"
+            >
+            </a-pointcloud>
+          </a-entity>
+        </template>
+
+        <!-- /Templates -->
+      </a-assets>
+
+      <a-entity environment="preset: default"></a-entity>
+
+      <a-entity
+        id="player"
+        networked="template:#avatar-template;attachTemplateToLocal:false;"
+        camera
+        position="0 1.6 0"
+        stackverse-persistent="template:#stackverse-template"
+        wasd-controls
+        look-controls
+      >
+        <a-sphere class="head" visible="false" random-color></a-sphere>
+      </a-entity>
+
+      <a-entity
+        light="color: #ccccff; intensity: 1; type: ambient;"
+        visible=""
+      ></a-entity>
+      <a-entity
+        light="color: #ffaaff; intensity: 1.5"
+        position="5 5 5"
+      ></a-entity>
+    </a-scene>
+
+    <script>
+      // Called by Networked-Aframe when connected to server
+
+      var entity = document.querySelector("[sound]");
+      entity.components.sound.playSound();
+
+      function onConnect() {
+        console.log("onConnect", new Date());
+      }
+    </script>
+  </body>
+</html>
