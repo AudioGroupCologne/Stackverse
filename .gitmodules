@@ -1,0 +1,6 @@
+[submodule "aframe-resonance-audio-component"]
+	path = aframe-resonance-audio-component
+	url = https://github.com/AudioGroupCologne/aframe-resonance-audio-component/
+[submodule "aframe-stackbeat"]
+	path = aframe-stackbeat
+	url = https://github.com/AudioGroupCologne/aframe-stackbeat
