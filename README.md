@@ -1,6 +1,6 @@
-# Metabeat
+# Stackverse
 
-Repository for Metabeat, Bytebeat live coding in the metaverse
+Repository for Stackverse, StackBeat live coding in the metaverse
 
 # Dependencies
 
@@ -8,4 +8,4 @@ Run this in a Networked-Aframe instance: [Networked-Aframe](https://github.com/n
 
 # Run on Glitch
 
-Run or remix Metabeat on Glitch: [Metabeat-default](https://metabeat-default-project.glitch.me/)
+Run or remix Stackverse on Glitch: [Stackverse-default](https://stackverse-default-project.glitch.me/)
